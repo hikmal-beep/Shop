@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 type User struct {
 	ID        int64 	`gorm:"primaryKey;autoIncrement" json:"id"`
@@ -10,4 +14,18 @@ type User struct {
 	CreatedAt time.Time	`json:"created_at"`
 	UpdatedAt time.Time	`json:"updated_at"`
 	Shops     []Shop 	`gorm:"foreignKey:UserID" json:"tokos,omitempty"`
+}
+
+func (user *User) SetPassword(password string) error{
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+	user.Password = string(bytes)
+	return nil
+}
+
+func (user *User) CheckPassword(password string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+	return err == nil
 }

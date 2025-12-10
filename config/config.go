@@ -9,6 +9,8 @@ import (
 	"gorm.io/gorm"
 )
 
+const JWTSecret = "A_VERY_STRONG_JWT_SECRET_KEY_12345_SHOP"
+
 func Connect() *gorm.DB {
 	var (
 		dbHost     = os.Getenv("DB_HOST")
