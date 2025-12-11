@@ -19,29 +19,19 @@ func (s *service) FindByID(ctx context.Context, id int64) (*models.Shop, error) 
 	return s.repo.FindByID(ctx, id)
 }
 
-func (s *service) FindByUserID(ctx context.Context, userID int64) (*models.Shop, error) {
+func (s *service) FindByUserID(ctx context.Context, userID int64) ([]models.Shop, error) {
 	return s.repo.FindByUserID(ctx, userID)
 }
 
 func (s *service) Create(ctx context.Context, userID int64, data CreateShopData) (*models.Shop, error) {
-	// ✅ Security: Check if user already has a shop
-	existingShop, err := s.repo.FindByUserID(ctx, userID)
-	if err != nil {
-		return nil, err
-	}
-
-	if existingShop != nil {
-		return nil, errors.New("user already has a shop")
-	}
-
-	// Create new shop
+	// Create new shop (users can have multiple shops)
 	shop := &models.Shop{
 		UserID:  userID,
 		Name:    data.Name,
 		Address: data.Address,
 	}
 
-	err = s.repo.Create(ctx, shop)
+	err := s.repo.Create(ctx, shop)
 	if err != nil {
 		return nil, err
 	}

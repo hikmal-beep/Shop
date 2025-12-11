@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"Shop/config"
+	"os"
 	"strconv"
 
 	jwtware "github.com/gofiber/contrib/jwt"
@@ -17,8 +17,12 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 }
 
 func JWTAuthMiddleware() fiber.Handler {
+	jwtSecret := os.Getenv("JWT_SECRET")
+	if jwtSecret == "" {
+		jwtSecret = "A_VERY_STRONG_JWT_SECRET_KEY_12345_SHOP" // Fallback secret
+	}
 	return jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{Key: []byte(config.JWTSecret)},
+		SigningKey: jwtware.SigningKey{Key: []byte(jwtSecret)},
 		ContextKey: "user",
 		ErrorHandler: ErrorHandler,
 	})

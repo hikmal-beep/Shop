@@ -27,15 +27,15 @@ func (r *repository) FindByID(ctx context.Context, id int64) (*models.Shop, erro
 	return shop, err
 }
 
-func (r *repository) FindByUserID(ctx context.Context, userID int64) (*models.Shop, error) {
-	var shop *models.Shop
-	err := r.db.WithContext(ctx).Where("user_id = ?", userID).First(&shop).Error
+func (r *repository) FindByUserID(ctx context.Context, userID int64) ([]models.Shop, error) {
+	var shops []models.Shop
+	err := r.db.WithContext(ctx).Where("user_id = ?", userID).Find(&shops).Error
 
-	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
-		return nil, nil
+	if err != nil {
+		return nil, err
 	}
 
-	return shop, err
+	return shops, nil
 }
 
 func (r *repository) Create(ctx context.Context, shop *models.Shop) error {

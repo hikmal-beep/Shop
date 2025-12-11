@@ -1,6 +1,7 @@
 package config
 
 import (
+	"Shop/routes"
 	"log"
 	"os"
 
@@ -17,7 +18,11 @@ func Route(db *gorm.DB) {
 		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
 	}))
 
-	routes.ProductRouter(app, db)
+	// Public routes (no JWT required)
+	routes.AuthRouter(app, db)
+
+	// Protected routes (JWT required)
+	routes.ShopRouter(app, db)
 
 	log.Fatalln(app.Listen(":" + os.Getenv("PORT")))
 }

@@ -25,7 +25,6 @@ func (s *service) FindByID(ctx context.Context, id int64) (*models.Product, erro
 }
 
 func (s *service) Create(ctx context.Context, userID int64, data CreateProductData) (*models.Product, error) {
-	// ✅ Security: Verify the shop belongs to the user
 	shop, err := s.shopRepo.FindByID(ctx, data.ShopID)
 	if err != nil {
 		return nil, err
@@ -56,7 +55,6 @@ func (s *service) Create(ctx context.Context, userID int64, data CreateProductDa
 }
 
 func (s *service) Update(ctx context.Context, userID int64, data UpdateProductData) (*models.Product, error) {
-	// ✅ Security: Verify the product exists
 	product, err := s.repo.FindByID(ctx, data.ID)
 	if err != nil {
 		return nil, err
@@ -66,7 +64,6 @@ func (s *service) Update(ctx context.Context, userID int64, data UpdateProductDa
 		return nil, errors.New("product not found")
 	}
 
-	// ✅ Security: Verify the shop belongs to the user
 	shop, err := s.shopRepo.FindByID(ctx, product.ShopID)
 	if err != nil {
 		return nil, err
@@ -80,7 +77,6 @@ func (s *service) Update(ctx context.Context, userID int64, data UpdateProductDa
 		return nil, errors.New("unauthorized: shop does not belong to user")
 	}
 
-	// Update product
 	product.Product = data.Product
 	product.Description = data.Description
 	product.Quantity = data.Quantity

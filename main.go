@@ -10,9 +10,9 @@ import (
 func main() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Printf(".env file not found, using environtment variables instead")
+		log.Printf(".env file not found, using environment variables instead")
 	}
-	
+
 	db := config.Connect()
-	config
+	config.Route(db)
 }
