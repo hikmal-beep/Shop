@@ -13,7 +13,7 @@ type User struct {
 	Password  string	`gorm:"type:varchar(255);not null" json:"-"`
 	CreatedAt time.Time	`json:"created_at"`
 	UpdatedAt time.Time	`json:"updated_at"`
-	Shops     []Shop 	`gorm:"foreignKey:UserID" json:"tokos,omitempty"`
+	Shop      *Shop 	`gorm:"foreignKey:UserID" json:"shop,omitempty"`
 }
 
 func (user *User) SetPassword(password string) error{

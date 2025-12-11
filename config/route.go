@@ -20,3 +20,4 @@ func Route(db *gorm.DB) {
 	routes.ProductRouter(app, db)
 
 	log.Fatalln(app.Listen(":" + os.Getenv("PORT")))
+}
