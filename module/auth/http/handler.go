@@ -2,6 +2,7 @@ package http
 
 import (
 	"Shop/helper"
+	"Shop/middleware"
 	"Shop/module/auth/service"
 
 	"github.com/go-playground/validator/v10"
@@ -24,8 +25,8 @@ func NewAuthHandler(service service.UserService) *AuthHandler {
 func (h *AuthHandler) Register(c *fiber.Ctx) error {
 	var req RegisterRequest
 
-	// Parse request body
-	if err := c.BodyParser(&req); err != nil {
+	// Parse request body using Bind method
+	if err := req.Bind(c); err != nil {
 		response := helper.APIResponse("Invalid request", fiber.StatusBadRequest, "error", nil)
 		return c.Status(fiber.StatusBadRequest).JSON(response)
 	}
@@ -69,8 +70,8 @@ func (h *AuthHandler) Register(c *fiber.Ctx) error {
 func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	var req LoginRequest
 
-	// Parse request body
-	if err := c.BodyParser(&req); err != nil {
+	// Parse request body using Bind method
+	if err := req.Bind(c); err != nil {
 		response := helper.APIResponse("Invalid request", fiber.StatusBadRequest, "error", nil)
 		return c.Status(fiber.StatusBadRequest).JSON(response)
 	}
@@ -94,14 +95,14 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 	}
 
 	// Generate JWT token
-	token, err := service.GenerateJWT(user.ID)
+	token, err := middleware.GenerateToken(user.ID, user.Email)
 	if err != nil {
 		response := helper.APIResponse("Failed to generate token", fiber.StatusInternalServerError, "error", err.Error())
 		return c.Status(fiber.StatusInternalServerError).JSON(response)
 	}
 
-	// Return response with token
-	authResponse := AuthResponse{
+	// Return response with token using LoginResponse
+	loginResponse := LoginResponse{
 		Token: token,
 		User: UserData{
 			ID:    user.ID,
@@ -110,6 +111,6 @@ func (h *AuthHandler) Login(c *fiber.Ctx) error {
 		},
 	}
 
-	response := helper.APIResponse("Login successful", fiber.StatusOK, "success", authResponse)
+	response := helper.APIResponse("Login successful", fiber.StatusOK, "success", loginResponse)
 	return c.Status(fiber.StatusOK).JSON(response)
 }

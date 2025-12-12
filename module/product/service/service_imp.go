@@ -24,6 +24,10 @@ func (s *service) FindByID(ctx context.Context, id int64) (*models.Product, erro
 	return s.repo.FindByID(ctx, id)
 }
 
+func (s *service) FindByShopID(ctx context.Context, shopID int64) ([]models.Product, error) {
+	return s.repo.FindByShopID(ctx, shopID)
+}
+
 func (s *service) Create(ctx context.Context, userID int64, data CreateProductData) (*models.Product, error) {
 	shop, err := s.shopRepo.FindByID(ctx, data.ShopID)
 	if err != nil {
@@ -90,7 +94,7 @@ func (s *service) Update(ctx context.Context, userID int64, data UpdateProductDa
 }
 
 func (s *service) Delete(ctx context.Context, userID int64, id int64) error {
-	// ✅ Security: Verify the product exists
+	
 	product, err := s.repo.FindByID(ctx, id)
 	if err != nil {
 		return err
@@ -100,7 +104,7 @@ func (s *service) Delete(ctx context.Context, userID int64, id int64) error {
 		return errors.New("product not found")
 	}
 
-	// ✅ Security: Verify the shop belongs to the user
+	
 	shop, err := s.shopRepo.FindByID(ctx, product.ShopID)
 	if err != nil {
 		return err

@@ -22,6 +22,7 @@ type UpdateProductData struct {
 
 type ProductService interface {
 	FindByID(ctx context.Context, id int64) (*models.Product, error)
+	FindByShopID(ctx context.Context, shopID int64) ([]models.Product, error)
 	Create(ctx context.Context, userID int64, data CreateProductData) (*models.Product, error)
 	Update(ctx context.Context, userID int64, data UpdateProductData) (*models.Product, error)
 	Delete(ctx context.Context, userID int64, id int64) error

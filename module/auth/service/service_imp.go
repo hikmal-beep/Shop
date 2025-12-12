@@ -5,10 +5,6 @@ import (
 	"Shop/module/auth/repository"
 	"context"
 	"errors"
-	"os"
-	"time"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 type service struct {
@@ -63,21 +59,4 @@ func (s *service) Login(ctx context.Context, data LoginUserData) (*models.User, 
 }
 
 // GenerateJWT - Generate JWT token for user (helper function)
-func GenerateJWT(userID int64) (string, error) {
-	claims := jwt.MapClaims{
-		"user_id": userID,
-		"exp":     time.Now().Add(time.Hour * 24 * 7).Unix(), // 7 days expiration
-	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	jwtSecret := os.Getenv("JWT_SECRET")
-	if jwtSecret == "" {
-		jwtSecret = "A_VERY_STRONG_JWT_SECRET_KEY_12345_SHOP" // Fallback secret
-	}
-	tokenString, err := token.SignedString([]byte(jwtSecret))
-	if err != nil {
-		return "", err
-	}
-
-	return tokenString, nil
-}

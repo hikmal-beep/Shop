@@ -23,8 +23,17 @@ func (r *repository) FindByID(ctx context.Context, id int64) (*models.Product, e
 	if err != nil && errors.Is(err, gorm.ErrRecordNotFound) {
 		return nil, nil
 	}
-	
+
 	return product, err
+}
+
+func (r *repository) FindByShopID(ctx context.Context, shopID int64) ([]models.Product, error) {
+	var products []models.Product
+	err := r.db.WithContext(ctx).Where("shop_id = ?", shopID).Find(&products).Error
+	if err != nil {
+		return nil, err
+	}
+	return products, nil
 }
 
 func (r *repository) Update(ctx context.Context, product *models.Product) error  {

@@ -3,6 +3,7 @@ package middleware
 import (
 	"os"
 	"strconv"
+	"time"
 
 	jwtware "github.com/gofiber/contrib/jwt"
 	"github.com/gofiber/fiber/v2"
@@ -50,4 +51,19 @@ func GetUserIDStringFromToken(c *fiber.Ctx) (string, error) {
 		return "", err
 	}
 	return strconv.FormatInt(userID, 10), nil
+}
+
+func GenerateToken(userID int64, email string) (string, error) {
+	secret := os.Getenv("JWT_SECRET")
+
+	// Use MapClaims to match the middleware validation
+	claims := jwt.MapClaims{
+		"user_id": userID,
+		"email":   email,
+		"exp":     time.Now().Add(time.Hour * 24 * 7).Unix(), // 7 days expiration
+		"iat":     time.Now().Unix(),
+	}
+
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(secret))
 }

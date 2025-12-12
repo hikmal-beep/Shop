@@ -18,11 +18,9 @@ func Route(db *gorm.DB) {
 		AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
 	}))
 
-	// Public routes (no JWT required)
 	routes.AuthRouter(app, db)
-
-	// Protected routes (JWT required)
 	routes.ShopRouter(app, db)
+	routes.ProductRouter(app, db)
 
 	log.Fatalln(app.Listen(":" + os.Getenv("PORT")))
 }
